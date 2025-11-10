@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HungerFree — View Foods</title>
+
+<!-- Poppins + Font Awesome -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<!-- AOS -->
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+<style>
+  :root{
+      --accent: #00b894;
+      --accent-2: #03d979;
+      --text: #05483A;
+      --muted: #647B75;
+      --glass: rgba(255,255,255,0.88);
+      --glass-border: rgba(255,255,255,0.65);
+      --card: rgba(255,255,255,0.95);
+      --radius: 14px;
+      --shadow: 0 16px 44px rgba(6,38,30,0.10);
+  }
+
+  *{box-sizing:border-box}
+body {
+    background: linear-gradient(339deg,rgba(255, 255, 255, 1) 29%, rgba(0, 184, 116, 1) 71%, rgba(0, 184, 148, 1) 100%);
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins",system-ui,Segoe UI,Roboto,Helvetica,Arial;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+  }
+
+  /* page wrapper - scoped so it doesn't change your index */
+  .view-container {
+    min-height: calc(100vh - 80px);  /* Subtracting footer margin */
+    padding: 56px 18px 0;  /* Removed bottom padding */
+    position: relative;
+    background: linear-gradient(339deg,rgba(255, 255, 255, 1) 29%, rgba(0, 184, 116, 1) 71%, rgba(0, 184, 148, 1) 100%);
+    overflow-x: hidden;
+    margin-bottom: 0;  /* Ensure no gap before footer */
+  }
+
+  /* subtle floating bubbles texture (non-invasive) */
+  .view-container::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity:0.45; pointer-events:none;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  /* header */
+  .view-head{
+    max-width:1200px; margin: 0 auto 22px; text-align:center; position:relative; z-index:2;
+    color:var(--text-dark);
+  }
+  .view-head h1{font-size:30px; margin:0; font-weight:700; letter-spacing:-0.5px}
+  .view-head p{margin:8px 0 0; color: rgba(5,56,36,0.9); font-size:14px}
+
+  /* big filter bar (desktop) */
+  .filter-wrap{ z-index:2; width:100%; display:flex; justify-content:center; margin:22px 0 28px; }
+  .filter-box{
+    width:95%; max-width:1100px; background:var(--glass); backdrop-filter: blur(12px);
+    border-radius:16px; padding:18px; display:flex; gap:14px; align-items:center;
+    box-shadow: 0 10px 30px rgba(3,30,20,0.08);
+  }
+
+  .filter-field {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    font-size: 15px;
+    color: var(--text);
+    min-width: 160px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .filter-field:hover {
+    border-color: rgba(0,184,116,0.1);
+  }
+
+  .filter-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,184,116,0.1);
+  }
+
+  .filter-field[type="text"] {
+    flex: 1 1 40%;
+    min-width: 220px;
+  }
+
+  .filter-field.select {
+    flex: 1;
+    min-width: 120px;
+    height: 42px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2305483A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+  .apply-btn{
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    border:none; color:white; padding:12px 18px; border-radius:10px; font-weight:700; cursor:pointer;
+    box-shadow:0 8px 18px rgba(3,30,20,0.12);
+  }
+  .apply-btn:hover{ transform: translateY(-3px); box-shadow:0 16px 26px rgba(3,30,20,0.16) }
+
+  /* cards grid */
+  .cards-container{
+    max-width:1200px; width:95%; margin: 0 auto; display:grid;
+    /* Keep card width consistent and center when few results: cards are between 300-360px and centered */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
+    justify-content: center;
+    gap:20px; z-index:2;
+  }
+
+  /* card - consistent height */
+  .meal-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));
+    border-radius:16px; overflow:hidden; box-shadow: 0 12px 30px rgba(2,40,25,0.07);
+    display:flex; flex-direction:column; height:380px; transition: transform .28s cubic-bezier(.2,.9,.24,1), box-shadow .28s;
+    border:1px solid rgba(0,0,0,0.03);
+    position:relative;
+    width:100%; /* ensure cards fill their grid cell consistently */
+    margin-bottom: 2rem;
+  }
+
+  /* image area */
+  .meal-thumb{ width:100%; height:160px; object-fit:cover; display:block; }
+
+  .meal-inner{ padding:14px 16px; display:flex; flex-direction:column; flex:1; }
+  .meal-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px }
+  .meal-type{
+    padding:6px 10px; border-radius:999px; font-weight:700; color:white; font-size:13px; display:inline-flex; align-items:center; gap:8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  }
+  .meal-type i{ font-size:12px }
+
+  .meal-title{ font-size:20px; color:var(--text-dark); font-weight:700; margin:6px 0 6px }
+  .meal-meta{ color:#296a47; font-size:14px; margin-bottom:6px }
+
+  .meal-stats{ display:flex; gap:12px; color:#073c2a; font-weight:600; margin-top:6px }
+  .meal-footer{ margin-top:auto; display:flex; gap:10px; align-items:center; justify-content:space-between }
+  .btn-call, .btn-chat{
+    padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; font-size:15px;
+  }
+  .btn-call{
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); 
+    color: var(--text-dark); 
+    box-shadow:0 8px 18px rgba(0,184,116,0.16)
+  }
+  .btn-chat{
+    background: white; color: var(--accent-1); border:1px solid rgba(0,184,116,0.12);
+  }
+
+  /* improved interactive states for call/chat buttons */
+  .btn-call, .btn-chat{
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .btn-call:hover,
+  .btn-call:focus {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0,184,116,0.18);
+  }
+  .btn-call:active{ transform: translateY(-1px) scale(.995) }
+  .btn-call:focus-visible{ outline: none; box-shadow: 0 18px 40px rgba(0,184,116,0.22), 0 0 0 6px rgba(0,184,116,0.06) }
+
+  .btn-chat:hover,
+  .btn-chat:focus{
+    transform: translateY(-4px);
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    color: var(--text-dark);
+    border-color: transparent;
+    box-shadow: 0 14px 36px rgba(0,184,116,0.14);
+  }
+  .btn-chat:active{ transform: translateY(-1px) }
+  .btn-chat:focus-visible{ outline: none; box-shadow: 0 14px 36px rgba(0,184,116,0.16), 0 0 0 6px rgba(0,184,116,0.05) }
+
+  @media (prefers-reduced-motion: reduce){
+    .btn-call, .btn-chat{ transition:none !important; animation:none !important }
+  }
+
+  /* hover lively effect */
+  .meal-card:hover{
+    transform: translateY(-10px) rotateZ(-0.5deg) scale(1.006);
+    box-shadow: 0 20px 46px rgba(2,40,25,0.14);
+  }
+
+  /* idle lively bobbing (staggered via JS) */
+  @keyframes lively-bob {
+    0%{ transform: translateY(0) }
+    25%{ transform: translateY(-6px) }
+    50%{ transform: translateY(0) }
+    75%{ transform: translateY(-3px) }
+    100%{ transform: translateY(0) }
+  }
+  .bob-slow{ animation: lively-bob 6s ease-in-out infinite; }
+  .bob-medium{ animation: lively-bob 5s ease-in-out infinite; }
+  .bob-fast{ animation: lively-bob 4s ease-in-out infinite; }
+
+  /* appear/fade animations for search */
+  .fade-in {
+    animation: cardIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    backface-visibility: hidden;
+  }
+  
+  .fade-out {
+    animation: cardOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+    backface-visibility: hidden;
+  }
+  
+  @keyframes cardIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes cardOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(15px) scale(0.98);
+    }
+  }
+
+  /* sticker-style type colors */
+  .type-cooked{ background: linear-gradient(90deg,#009e66,#03d979) }
+  .type-fruits{ background: linear-gradient(90deg,#60c960,#a4f46e) }
+  .type-packaged{ background: linear-gradient(90deg,#4c6ef5,#75a7ff) }
+  .type-bakery{ background: linear-gradient(90deg,#f59e0b,#ffcc5b) }
+
+  /* responsive adjustments */
+  @media (max-width:900px){
+    .meal-card{ height:360px }
+  }
+  @media (max-width:680px){
+    .filter-box{ flex-direction:column; gap:12px; padding:14px }
+    .filter-field{ width:100% }
+    .meal-card{ height:320px }
+    .meal-thumb{ height:140px }
+  }
+  @media (max-width:420px){
+    .meal-card{ height:310px }
+  }
+
+  /* ensure identical card body layout for equal heights */
+  .meal-inner .meta-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px }
+  .added-badge{ color:#10663f; font-size:13px }
+
+  @media (max-width: 680px) {
+  .view-head h1 {
+    font-size: 24px;
+  }
+
+  .view-head p {
+    font-size: 13px;
+  }
+
+  .filter-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    width: 100%;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+
+  .filter-field {
+    width: 100%;
+    min-width: unset;
+    font-size: 14px;
+    padding: 12px 14px;
+    height: 44px;
+    line-height: 1.2;
+  }
+
+  .apply-btn {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px 0;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .filter-field {
+    width: 100%;
+    min-width: unset;
+    font-size: 14px;
+    padding: 8px 12px;
+    height: 40px !important;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+
+  select.filter-field {
+    background: rgba(255, 255, 255, 0.8)
+      url("data:image/svg+xml;utf8,<svg fill='black' height='14' viewBox='0 0 24 24' width='14' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+      no-repeat right 10px center;
+    background-size: 14px;
+  }
+
+  .apply-btn {
+    width: 100%;
+    font-size: 15px;
+    padding: 10px 0;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #00c46b, #00e89f);
+    color: #fff;
+    border: none;
+    transition: 0.3s;
+  }
+
+  .apply-btn:hover {
+    background: linear-gradient(90deg, #00e89f, #00c46b);
+  }
+}
+:root {
+  --mint-1:#e8fdf6;
+  --mint-2:#f7fff9;
+  --accent:#00b894;
+  --accent-2:#55efc4;
+  --muted:#4e6b62;
+  --glass: rgba(255,255,255,0.88);
+  --glass-border: rgba(255,255,255,0.65);
+  --radius:14px;
+  --shadow: 0 16px 44px rgba(6,38,30,0.10);
+}
+
+/* ===== NAV STYLING FOR VIEW PAGE ===== */
+/* ensure the root and body both carry the background so sticky header gaps never show white */
+.site-header {
+  
+  position: sticky;
+  top: 12px; /* match index: slight offset so header appears as frosted panel */
+  z-index: 1000;
+}
+.header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0; /* compact padding like index */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Brand */
+.brand, .brand a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--accent);
+}
+.brand i {font-size: 1.1rem;}
+
+/* Desktop Nav */
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  /* frosted glass pill behind the desktop links (matches index site look) */
+  background: var(--glass);
+  /* slightly wider pill: extend horizontally by ~6px and increase rounding for a softer look */
+  border-radius: 18px;
+  padding: 10px 24px; /* +6px each side compared to before */
+  box-sizing: border-box;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+.nav-link {
+  color: #0b3b33;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.nav-link:hover {
+  color: var(--accent);
+  background: rgba(0,184,148,0.08);
+  transform: translateY(-2px);
+}
+.btn-login {
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0,184,148,0.25);
+  transition: all 0.25s ease;
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg,var(--accent-2),var(--accent));
+}
+
+/* Burger Menu Button */
+.burger {
+  display: none;
+  width: 44px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  z-index: 1002;
+  margin-left: auto;
+  transition: background-color 0.3s ease;
+}
+.burger span {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: transform .25s ease, opacity .2s ease;
+}
+.burger span:nth-child(1) {top: 10px;}
+.burger span:nth-child(2) {top: 18px;}
+.burger span:nth-child(3) {top: 26px;}
+.burger.open span:nth-child(1){transform:translateY(8px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
+.burger:hover{background:rgba(0,184,148,0.06);border-radius:10px;}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  right: 18px;
+  top: 82px;
+  width: 86%;
+  max-width: 360px;
+  height: calc(100vh - 110px);
+  transform: translateX(120%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .24s;
+  z-index: 1001;
+}
+.mobile-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-inner {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(5,30,20,0.08);
+}
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+.mobile-link {
+  color: #083a33;
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  transition: all 0.18s ease;
+}
+.mobile-link:hover {
+  background: rgba(0,184,148,0.08);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-desktop {
+    display: none;
+  }
+  .burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+  }
+}
+
+/* footer */
+.site-footer {
+  background: linear-gradient(180deg, var(--glass) 0%, rgba(255, 255, 255, 0.98) 100%);
+  backdrop-filter: blur(10px);
+  margin-top: 0;
+  border-top: 1px solid var(--glass-border);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.site-footer::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -100px;
+  height: 100px;
+  background: inherit;
+}
+
+.footer-content { 
+  padding: 40px 0 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-col {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-links li {
+  width: 100%;
+}
+
+.footer-links a {
+  display: block;
+  padding: 4px 0;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 20px;
+}
+
+.footer-links a::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+  padding-left: 25px;
+}
+
+.footer-links a:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.footer-note {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-col h4 {
+  color: #064b3f;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+  padding-left: 5px;
+}
+
+.footer-links a::before {
+  content: '→';
+  position: absolute;
+  left: -20px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover::before {
+  opacity: 1;
+  left: -15px;
+}
+
+.socials {
+  display: flex;
+  gap: 16px;
+}
+
+.social-link {
+  color: var(--accent);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 184, 148, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-link:hover {
+  transform: translateY(-3px);
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+}
+
+.newsletter-text {
+  color: var(--muted);
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.footer-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.footer-input {
+  flex: 1;
+  min-width: 0; /* Prevents input from overflowing on small screens */
+  padding: 12px 16px;
+  border: 2px solid rgba(6,38,30,0.06);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,255,250,0.9));
+  transition: box-shadow 0.22s ease, border-color 0.18s ease, transform 0.12s ease;
+  font-size: 0.95rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.footer-input::placeholder{color:rgba(6,38,30,0.4)}
+.footer-input:focus{outline:none;border-color:var(--accent);box-shadow:0 8px 30px rgba(0,184,148,0.08), inset 0 1px 0 rgba(255,255,255,0.9);transform:translateY(-1px)}
+
+.footer-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 184, 148, 0.1);
+}
+
+.footer-input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.footer-btn {
+  padding: 12px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* Prevents button text from wrapping */
+  font-weight: 600;
+}
+
+.footer-btn:hover {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--glass-border);
+  padding: 20px 0;
+}
+
+.footer-bottom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-bottom-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 1200px) {
+  .footer-content {
+    padding: 50px 0 30px;
+  }
+
+  .footer-col {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 900px) {
+  .footer-col {
+    flex-basis: calc(50% - 20px);
+    min-width: 250px;
+  }
+
+  .footer-col:last-child {
+    flex-basis: 100%;
+    margin-top: 20px;
+    padding-top: 30px;
+    border-top: 1px solid var(--glass-border);
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    padding: 40px 0 20px;
+  }
+
+  .footer-grid {
+    gap: 30px;
+  }
+
+  .footer-col {
+    flex-basis: 100%;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: center;
+    align-items: center;
+  }
+
+  .footer-col:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .footer-brand {
+    justify-content: center;
+  }
+
+  .footer-note {
+    text-align: center;
+  }
+
+  .footer-links {
+    align-items: center;
+    width: 100%;
+  }
+
+  .footer-links li {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footer-links a {
+    text-align: center;
+    display: block;
+    padding: 8px 0;
+    width: 100%;
+  }
+
+  .footer-links a::before {
+    display: none;
+  }
+
+  .footer-links a:hover {
+    padding-left: 0;
+    transform: translateY(-2px);
+    color: var(--accent);
+  }
+
+  .footer-form {
+    flex-direction: column;
+    gap: 15px;
+    max-width: 100%;
+  }
+
+  .footer-input {
+    width: 100%;
+    text-align: center;
+    padding: 15px 20px;
+    font-size: 16px; /* Prevents zoom on mobile */
+  }
+
+  .footer-btn {
+    width: 100%;
+    padding: 15px 24px;
+  }
+
+  .socials {
+    justify-content: center;
+  }
+
+  .social-link {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .footer-bottom .container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .footer-bottom-links {
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Fix for extremely small screens */
+@media (max-width: 350px) {
+  .footer-grid {
+    gap: 25px;
+  }
+
+  .footer-col {
+    padding-bottom: 25px;
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+</style>
+</head>
+<body>
+
+
+    <!-- NAV -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <i class="fa-solid fa-utensils" style="color: white;"></i><span style="color: white;">HungerFree</span>
+    </a>
+
+    <nav id="navDesktop" class="nav-desktop" role="navigation" aria-label="Main Navigation">
+      <a href="index.html#home" class="nav-link">Home</a>
+      <a href="index.html#about" class="nav-link">About</a>
+      <a href="index.html#places" class="nav-link">Places</a>
+      <a href="index.html#donate" class="nav-link">Donate</a>
+      <a href="./view.html" class="nav-link active">Available Foods</a>
+      <a href="./contact.html" class="nav-link">Contact</a>
+      <a href="/login.html" class="nav-link btn-login">Login</a>
+    </nav>
+
+    <button id="burger" class="burger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile sliding menu -->
+  <aside id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <div class="mobile-inner">
+        <nav class="mobile-nav" role="navigation">
+          <a class="mobile-link" href="./index.html#home">Home</a>
+          <a class="mobile-link" href="./index.html#about">About</a>
+          <a class="mobile-link" href="./index.html#places">Places</a>
+          <a class="mobile-link" href="./index.html#donate">Donate</a>
+          <a href="./view.html" class="nav-link">Available Foods</a>
+          <a class="mobile-link" href="./contact.html">Contact</a>
+          <a class="mobile-link login-mobile" href="./login.html">Login</a>
+      </nav>
+    </div>
+  </aside>
+</header>
+
+
+<div class="view-container">
+
+  <div class="view-head">
+    <h1>🍽️ Shared Meals Around You</h1>
+    <p>Find nearby donated meals — quick pickup, zero waste.</p>
+  </div>
+
+  <div class="filter-wrap">
+    <div class="filter-box" role="region" aria-label="filters">
+      <input id="searchInput" class="filter-field" type="text" placeholder="Search city or area (e.g. Chennai)" />
+      <select id="typeFilter" class="filter-field select">
+        <option value="all">All types</option>
+        <option value="cooked">Cooked</option>
+        <option value="fruits">Fruits</option>
+        <option value="packaged">Packaged</option>
+        <option value="bakery">Bakery</option>
+      </select>
+      <select id="sortFilter" class="filter-field select">
+        <option value="latest">Latest Added</option>
+        <option value="expiry">Soon to Expire</option>
+      </select>
+      <button id="applyBtn" class="apply-btn" style="background: #00b894;">Apply</button>
+    </div>
+  </div>
+
+  <div class="cards-container" id="cards"></div>
+
+</div>
+  <!-- FOOTER -->
+  <footer class="site-footer" style="background: rgba(255,255,255,0.88);">
+    <div class="footer-content">
+      <div class="container footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand">
+            <i class="fa-solid fa-utensils"></i>
+            <span>HungerFree</span>
+          </div>
+          <p class="footer-note">Turning leftovers into lifelines — join the movement.</p>
+          <div class="socials">
+            <a href="#" aria-label="instagram" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="twitter" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" aria-label="linkedin" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#places">Service Areas</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Get Involved</h4>
+          <ul class="footer-links">
+            <li><a href="#donate">Donate Food</a></li>
+            <li><a href="#volunteer">Volunteer</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="/login">Partner Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Newsletter</h4>
+          <p class="newsletter-text">Stay updated with our mission and impact stories.</p>
+          <form class="footer-form">
+            <input type="email" placeholder="Your email" class="footer-input">
+            <button type="submit" class="footer-btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="copyright">© <span id="year"></span> HungerFree. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+<script>
+/* ---------- Data & images ---------- */
+const meals = [];  // No default meals, only showing user donations
+
+const imgFor = {
+  cooked: "https://images.unsplash.com/photo-1516684732162-798a0062be99?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
+  fruits: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  packaged: "https://images.unsplash.com/photo-1665935518967-079ecc08cc40?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  bakery: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
+};
+
+/* ---------- utils ---------- */
+const el = id => document.getElementById(id);
+const cardsContainer = el('cards');
+const searchInput = el('searchInput');
+const typeFilter = el('typeFilter');
+const sortFilter = el('sortFilter');
+const applyBtn = el('applyBtn');
+
+/* format added -> friendly label like "1h", "12h" */
+function formatAdded(h){
+  if(h < 24) return `${h}h`;
+  const d = Math.floor(h/24);
+  return `${d}d`;
+}
+
+/* render a single card element */
+function createCard(meal, idx){
+  const card = document.createElement('article');
+  card.className = 'meal-card fade-in';
+  card.dataset.id = meal.id;
+
+  // lively bob class (staggered)
+  const bobClasses = ['bob-slow','bob-medium','bob-fast'];
+  card.classList.add(bobClasses[idx % bobClasses.length]);
+
+  // set inner HTML
+  card.innerHTML = `
+    <img class="meal-thumb" src="${imgFor[meal.type]}&sig=${meal.id}" alt="${meal.type} image" />
+    <div class="meal-inner">
+      <div class="meal-top">
+        <div>
+          <div class="meal-type type-${meal.type} ${'type-'+meal.type}">
+            <i class="fa-solid fa-utensils"></i>&nbsp; ${capitalize(meal.type)}
+          </div>
+        </div>
+        <div class="added-badge">Added ${formatAdded(meal.addedHours)}</div>
+      </div>
+
+      <div>
+        <h3 class="meal-title">${meal.city}</h3>
+        <div class="meta-row">
+          <div class="meal-meta"><strong>Qty:</strong> ${meal.qty}</div>
+          <div class="meal-meta"><strong>Expiry:</strong> ${meal.expiry}</div>
+        </div>
+      </div>
+
+      <div class="meal-footer">
+        <div class="meal-stats"><small style="opacity:.9">Type: ${capitalize(meal.type)}</small></div>
+        <div style="flex:1"></div>
+        <div class="card-actions">
+            <a href="tel:${meal.contact}"><button class="btn-call" aria-label="Call ${meal.city}">📞 Call</button></a>
+            <a href="https://api.whatsapp.com/send?phone=${meal.contact}"target="_blank"> <button class="btn-chat" aria-label="Chat ${meal.city}">💬 Chat</button></a>
+           
+        </div>
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1) }
+
+/* ---------- render flow with nice transition ---------- */
+let currentDisplayed = [...meals]; // initially all
+
+function renderList(list){
+  // fade out all existing cards (if any) then replace
+  const existing = Array.from(cardsContainer.children);
+  if(existing.length){
+    existing.forEach((c,i)=>{
+      c.classList.remove('fade-in');
+      c.classList.add('fade-out');
+    });
+    // after short delay replace
+    setTimeout(()=> {
+      cardsContainer.innerHTML = "";
+      pushCards(list);
+    }, 220);
+  } else {
+    pushCards(list);
+  }
+}
+
+function pushCards(list){
+  // Clear existing cards first
+  cardsContainer.innerHTML = '';
+  
+  if(!list || list.length === 0){
+    cardsContainer.insertAdjacentHTML('beforeend', `
+      <div style="grid-column:1/-1; text-align:center; padding:40px 20px; margin:20px; background:var(--glass); backdrop-filter:blur(10px); border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.06);">
+        <i class="fa-solid fa-heart-circle-exclamation" style="font-size:48px; color:var(--accent); margin-bottom:16px;"></i>
+        <h3 style="color:var(--text); margin:0 0 8px;">No Food Donations Available</h3>
+        <p style="color:var(--muted); margin:0;">Be the first to share food in your area! Visit the donate section to help those in need.</p>
+        <a href="index.html#donate" style="display:inline-block; margin-top:20px; padding:12px 24px; background:var(--accent); color:white; text-decoration:none; border-radius:8px; font-weight:600;">
+          Make a Donation
+        </a>
+      </div>`);
+    return;
+  }
+
+  list.forEach((m, i)=>{
+    const card = createCard(m, i);
+    // stagger appearance
+    card.style.animationDelay = (i * 0.08) + "s";
+    cardsContainer.appendChild(card);
+  });
+}
+
+/* ---------- filter logic (live search + apply) ---------- */
+function applyFilters(){
+  const search = searchInput.value.trim().toLowerCase();
+  const type = typeFilter.value;
+  const sort = sortFilter.value;
+
+  // Get donations from both localStorage keys and combine them
+  const hfDonations = JSON.parse(localStorage.getItem('hf-donations') || '[]');
+  const donations = JSON.parse(localStorage.getItem('donations') || '[]');
+  const allItems = [...meals, ...hfDonations, ...donations];
+  
+  // Make sure we have valid items
+  let result = allItems.filter(item => item !== null).filter(m => {
+    // Get searchable address from either city or full address
+    const searchableAddress = (m.city || m.address || '').toLowerCase();
+    const cityMatch = searchableAddress.includes(search);
+    
+    // Check both type and food fields
+    const itemType = (m.type || m.food || '').toLowerCase();
+    const typeMatch = (type === 'all') || (itemType === type.toLowerCase());
+    
+    return cityMatch && typeMatch;
+  });
+
+  if(sort === 'expiry'){
+    // sort by expiry hours estimate — rough parse numbers from expiry (e.g., "2 hrs", "1 hr", "30 min")
+    result.sort((a,b)=> {
+      const ah = parseExpiry(a.expiry), bh = parseExpiry(b.expiry);
+      return ah - bh;
+    });
+  } else {
+    // latest: sort by addedHours ascending -> lower addedHours is newer => we want newest first => smallest addedHours first
+    result.sort((a,b)=> a.addedHours - b.addedHours);
+  }
+
+  currentDisplayed = result;
+  renderList(result);
+}
+
+/* naive parser for expiry like "2 hrs" "1 hr" "30 min" */
+function parseExpiry(s){
+  if(!s) return 999;
+  const n = parseInt(s) || 999;
+  if(s.includes('min')) return n / 60;
+  return n;
+}
+
+/* keyboard-friendly live search with small debounce & animated pop */
+let debounceTimer = null;
+searchInput.addEventListener('input', ()=>{
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(()=> applyFilters(), 180);
+});
+applyBtn.addEventListener('click', applyFilters);
+typeFilter.addEventListener('change', applyFilters);
+sortFilter.addEventListener('change', applyFilters);
+
+/* initial render */
+// Check localStorage for donations first
+const hfDonations = JSON.parse(localStorage.getItem('hf-donations') || '[]');
+const donations = JSON.parse(localStorage.getItem('donations') || '[]');
+currentDisplayed = [...meals, ...hfDonations, ...donations].filter(item => item !== null);
+renderList(currentDisplayed);
+
+/* ensure same-sized images load smoothly: replace with fade-in on load */
+cardsContainer.addEventListener('click', e=>{
+  // placeholder for future Call/Chat wiring
+});
+
+/* accessibility: allow Enter on search to apply */
+searchInput.addEventListener('keydown', (ev)=>{
+  if(ev.key === 'Enter') applyFilters();
+});
+</script>
+<script>
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+function openMenu() {
+  burger.classList.add('open');
+  mobileMenu.classList.add('open');
+  mobileMenu.setAttribute('aria-hidden', 'false');
+  burger.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMenu() {
+  burger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  mobileMenu.setAttribute('aria-hidden', 'true');
+  burger.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+burger.addEventListener('click', () => {
+  mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+});
+document.querySelectorAll('.mobile-link').forEach(link =>
+  link.addEventListener('click', closeMenu)
+);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+</script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="./script.js"></script>
+</script>
+<script>
+// --- Display user donations from localStorage as cards ---
+document.addEventListener('DOMContentLoaded', function() {
+  const KEY = 'hf-donations';
+  const donations = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const cardsContainer = document.getElementById('cards');
+  if (!cardsContainer) return;
+
+  // Helper to capitalize first letter
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+  // Helper to get image for type (fallback to cooked)
+  const imgFor = {
+    cooked: "https://images.unsplash.com/photo-1516684732162-798a0062be99?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=687",
+    fruits: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1470",
+    packaged: "https://images.unsplash.com/photo-1665935518967-079ecc08cc40?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1470",
+    bakery: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1470"
+  };
+
+  // Render donation cards
+  function renderDonations(list) {
+    if (!list.length) return;
+    list.forEach((donation, i) => {
+      const card = document.createElement('article');
+      card.className = 'meal-card fade-in';
+      // lively bob class (staggered)
+      const bobClasses = ['bob-slow','bob-medium','bob-fast'];
+      card.classList.add(bobClasses[i % bobClasses.length]);
+
+      // Try to map donation.food/type to known types for image
+      let type = (donation.food || donation.type || '').toLowerCase();
+      if (!imgFor[type]) type = 'cooked';
+
+      card.innerHTML = `
+        <img class="meal-thumb" src="${imgFor[type]}&sig=${donation.id || i}" alt="${type} image" />
+        <div class="meal-inner">
+          <div class="meal-top">
+            <div>
+              <div class="meal-type type-${type}">
+                <i class="fa-solid fa-utensils"></i>&nbsp; ${capitalize(type)}
+              </div>
+            </div>
+            <div class="added-badge">Donor</div>
+          </div>
+          <div>
+            <h3 class="meal-title">${donation.address ? donation.address : 'Donated Food'}</h3>
+            <div class="meta-row">
+              <div class="meal-meta"><strong>Qty:</strong> ${donation.qty || donation.quantity || '-'}</div>
+              <div class="meal-meta"><strong>Expiry:</strong> ${donation.expiry || '-'}</div>
+            </div>
+          </div>
+          <div class="meal-footer">
+            <div class="meal-stats"><small style="opacity:.9">By: ${donation.name || 'Anonymous'}</small></div>
+            <div style="flex:1"></div>
+            <div class="card-actions">
+                <a href="tel:${donation.contact}"><button class="btn-call" aria-label="Call Donor">📞 Call</button></a>
+                <a href="https://api.whatsapp.com/send?phone=${donation.contact}" target="_blank"><button class="btn-chat" aria-label="Chat Donor">💬 Chat</button></a>
+            </div>
+          </div>
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    });
+  }
+
+  // Only add if there are donations
+  if (donations.length) {
+    renderDonations(donations);
+  }
+});
+</script>
+</body>
+</html>

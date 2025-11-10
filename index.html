@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HungerFree — Turning Leftovers into Lifelines</title>
+
+
+    <meta name="description" content="HungerFree is a food-sharing platform that connects surplus meals from homes, restaurants, and events with people in need. Donate food, reduce waste, and help feed your community with one simple click. Together, let’s make the world hunger-free. 💚">
+    <meta name="keywords" content="HungerFree, food donation, share food, surplus food, donate meals, reduce food waste, hunger relief, community food sharing, NGO, social impact, feed the hungry, donate food online, zero hunger, sustainability, charity India">
+    <meta name='author' content='hungerfree' />
+
+    <meta name="theme-color" content="#00b894">
+    <link rel='shortcut icon' href='' type='image/x-icon' />
+
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta name='robots' content='index, follow, notranslate' />
+    <link rel='canonical' href='http://127.0.0.1:5500/index.html' />
+
+<!-- 🧭 Open Graph (for link previews) -->
+<meta property="og:title" content="HungerFree – Turning Leftovers Into Lifelines 💚">
+<meta property="og:description" content="Join HungerFree and help share surplus food with people in need. Reduce waste, fight hunger, and feed hope.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80">
+<meta property="og:url" content="http://127.0.0.1:5500/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HungerFree">
+
+<!-- 🐦 Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HungerFree – Turning Leftovers Into Lifelines">
+<meta name="twitter:description" content="Share surplus food and reduce hunger. Every meal counts. 💚">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80">
+
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- NAV -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html"><i class="fa-solid fa-utensils"></i><span>HungerFree</span></a>
+
+      <nav id="navDesktop" class="nav-desktop" role="navigation" aria-label="Main Navigation">
+        <a href="./index.html#home" class="nav-link">Home</a>
+        <a href="./index.html#about" class="nav-link">About</a>
+        <a href="./index.html#places" class="nav-link">Places</a>
+        <a href="./index.html#donate" class="nav-link">Donate</a>
+        <a href="./view.html" class="nav-link">Available Foods</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+        <a href="/login.html" class="nav-link btn-login">Login</a>
+      </nav>
+
+      <button id="burger" class="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- mobile sliding menu -->
+    <aside id="mobileMenu" class="mobile-menu" aria-hidden="true">
+      <div class="mobile-inner">
+       
+
+        <nav class="mobile-nav" role="navigation">
+          <a class="mobile-link" href="./index.html#home">Home</a>
+          <a class="mobile-link" href="./index.html#about">About</a>
+          <a class="mobile-link" href="./index.html#places">Places</a>
+          <a class="mobile-link" href="./index.html#donate">Donate</a>
+          <a href="./view.html" class="nav-link">Available Foods</a>
+          <a class="mobile-link" href="./contact.html">Contact</a>
+          <a class="mobile-link login-mobile" href="./login.html">Login</a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+  <main >
+    <!-- HERO -->
+    <section id="home" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-left" data-aos="fade-right" data-aos-once="true">
+          <h1 class="hero-title">Turning Leftovers into Lifelines <span class="emoji">💚</span></h1>
+          <p class="hero-sub">Share surplus food, reduce waste and feed someone today. Small acts — huge impact.</p>
+
+          <div class="hero-ctas">
+            <a href="#donate" class="btn btn-primary shine">Join the Movement</a>
+            <a href="#how" class="btn btn-outline">How it works</a>
+          </div>
+
+          <div class="hero-stats" data-aos="fade-up" data-aos-delay="160" data-aos-once="true">
+            <div class="stat">
+              <div class="stat-num" id="mealsCount">0</div>
+              <div class="stat-label">Meals Shared</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="donorsCount">0</div>
+              <div class="stat-label">Active Donors</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="ngosCount">0</div>
+              <div class="stat-label">Partner NGOs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right" data-aos="fade-left" data-aos-once="true">
+          <div class="glass-card hero-img-card">
+            <img src='./bg.avif' alt="Food donation">
+          </div>
+        </div>
+      </div>
+
+      <!-- decorative blobs (hero only) -->
+      <div class="hero-blobs" aria-hidden="true">
+        <span class="blob b1"></span>
+        <span class="blob b2"></span>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section about">
+      <div class="container about-grid">
+          <div class="about-media" data-aos="fade-right">
+          <img src="./ngo.webp" alt="Community sharing" >
+        </div>
+        <div class="about-body" data-aos="fade-left">
+          <h2 class="center-title">About HungerFree</h2>
+          <p class="lead">HungerFree connects surplus food from events, restaurants and homes to verified NGOs and volunteers. List leftover meals — NGOs nearby can claim and collect.</p>
+
+          <div class="about-features">
+            <div class="feature"><i class="fa-solid fa-check icon"></i><p>Quick listing in under a minute</p></div>
+            <div class="feature"><i class="fa-solid fa-check icon"></i><p>Priority for near-expiry items</p></div>
+            <div class="feature"><i class="fa-solid fa-check icon"></i><p>Works offline — stored locally</p></div>
+          </div>
+        </div>
+
+      
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="section how" style="background: white;">
+      <div class="container">
+        <h2 class="center-title" data-aos="fade-up">How It Works</h2>
+        <p class="center-sub" data-aos="fade-up" data-aos-delay="60">Simple steps so food reaches people — not waste.</p>
+
+        <div class="how-grid">
+          <article class="how-card glass-card" data-aos="fade-up" data-aos-delay="100">
+            <i class="fa-solid fa-pen-to-square how-icon"></i>
+            <h4>List Food</h4>
+            <p>Donor fills a form with food type, quantity, expiry and pickup address.</p>
+          </article>
+
+          <article class="how-card glass-card" data-aos="fade-up" data-aos-delay="160">
+            <i class="fa-solid fa-clock-rotate-left how-icon"></i>
+            <h4>Time & Safety</h4>
+            <p>Expiry and pickup time help NGOs prioritise safe collections.</p>
+          </article>
+
+          <article class="how-card glass-card" data-aos="fade-up" data-aos-delay="220">
+            <i class="fa-solid fa-location-dot how-icon"></i>
+            <h4>NGOs View</h4>
+            <p>Nearby NGOs filter by location & expiry to claim donations.</p>
+          </article>
+
+          <article class="how-card glass-card" data-aos="fade-up" data-aos-delay="280">
+            <i class="fa-solid fa-hand-holding-heart how-icon"></i>
+            <h4>Delivered</h4>
+            <p>Volunteers pick up and deliver meals to those who need them.</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- subtle section blobs (different style) -->
+      <div class="section-blobs" aria-hidden="true">
+        <span class="sblob s1"></span>
+        <span class="sblob s2"></span>
+      </div>
+    </section>
+
+  <!-- PLACES / WE SERVE IN -->
+  <section id="places" class="section places">
+      <div class="container">
+        <h2 class="center-title" data-aos="fade-up" style="color: #009275;">We Serve In</h2>
+        <p class="center-sub" data-aos="fade-up" data-aos-delay="40" style="color: #00b894;">Active cities where HungerFree supports pickups and partners.</p>
+
+        <div class="places-grid">
+          <div class="place-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="place-bg" style="background-image:url('https://images.unsplash.com/photo-1629466800880-5db24451ea18?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1492')"></div>
+            <div class="place-body">
+              <i class="fa-solid fa-city place-icon"></i>
+              <h4>Chennai</h4>
+              <p>Local NGO partners & pickup volunteers.</p>
+            </div>
+          </div>
+
+          <div class="place-card" data-aos="fade-up" data-aos-delay="160">
+            <img src="./beng.webp" alt="" class="place-bg">
+            <div class="place-body">
+              <i class="fa-solid fa-city place-icon"></i>
+              <h4>Bengaluru</h4>
+              <p>Community kitchens and shelters supported.</p>
+            </div>
+          </div>
+
+          <div class="place-card" data-aos="fade-up" data-aos-delay="220">
+            <div class="place-bg" style="background-image:url('https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')"></div>
+            <div class="place-body">
+              <i class="fa-solid fa-city place-icon"></i>
+              <h4>Mumbai</h4>
+              <p>Rapid response pickup network.</p>
+            </div>
+          </div>
+
+          <div class="place-card" data-aos="fade-up" data-aos-delay="280">
+            <div class="place-bg" style="background-image:url('https://plus.unsplash.com/premium_photo-1661919589683-f11880119fb7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470')"></div>
+            <div class="place-body">
+              <i class="fa-solid fa-city place-icon"></i>
+              <h4>Delhi</h4>
+              <p>Volunteer drivers and NGO partners.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- DONATE (form) -->
+  <section id="donate" class="section donate">
+      <div class="container donate-grid">
+        <form id="donateForm" class="donate-form glass-card" data-aos="zoom-in">
+          <h3 style="margin-bottom: 1rem;">Donate Food</h3>
+
+          <div class="row">
+            <label class="field"><span>Full name</span><input id="d_name" type="text" placeholder="e.g. A. Kumar" required /></label>
+            <label class="field"><span>Contact (phone/email)</span><input id="d_contact" type="text" placeholder="phone or email — e.g. +91 98765 43210" required /></label>
+          </div>
+
+          <div class="row">
+            <label class="field">
+              <span>Food type</span>
+              <select id="d_food" required>
+                <option value="">Select food type</option>
+                <option value="cooked">Cooked Food</option>
+                <option value="fruits">Fruits & Vegetables</option>
+                <option value="packaged">Packaged Food</option>
+                <option value="bakery">Bakery Items</option>
+              </select>
+            </label>
+            <label class="field"><span>Quantity</span><input id="d_qty" type="text" placeholder="e.g. 10 meals / 5 boxes" required /></label>
+          </div>
+
+          <label class="field full"><span>Pickup address / landmark</span><input id="d_address" type="text" placeholder="Street, building, closest landmark" required /></label>
+
+          <div class="row small">
+            <label class="field"><span>Expiry / Pickup time</span><input id="d_expiry" type="text" placeholder="e.g. 6 hours / Today 14:30" required /></label>
+            <button id="useLoc" type="button" class="btn ghost">Use my city</button>
+          </div>
+
+          <div class="form-actions" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+            <button type="submit" class="btn primary submit-btn">Donate Now</button>
+            <button type="reset" class="btn outline">Reset</button>
+          </div>
+        </form>
+
+        <aside class="tips glass-card" data-aos="fade-left">
+          <h4  style="margin-bottom: 1rem;">Packing & Safety</h4>
+          <ul class="tips-list">
+            <li><i class="fa-solid fa-box"></i> Use sealed containers</li>
+            <li><i class="fa-solid fa-temperature-high"></i> Cool hot food quickly</li>
+            <li><i class="fa-solid fa-tag"></i> Label contents & allergens</li>
+            <li><i class="fa-solid fa-location-dot"></i> Clear pickup landmark</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" style="background: rgba(255,255,255,0.88);">
+    <div class="footer-content">
+      <div class="container footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand">
+            <i class="fa-solid fa-utensils"></i>
+            <span>HungerFree</span>
+          </div>
+          <p class="footer-note">Turning leftovers into lifelines — join the movement.</p>
+          <div class="socials">
+            <a href="#" aria-label="instagram" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="twitter" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" aria-label="linkedin" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#places">Service Areas</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Get Involved</h4>
+          <ul class="footer-links">
+            <li><a href="#donate">Donate Food</a></li>
+            <li><a href="#volunteer">Volunteer</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="/login">Partner Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Newsletter</h4>
+          <p class="newsletter-text">Stay updated with our mission and impact stories.</p>
+          <form class="footer-form">
+            <input type="email" placeholder="Your email" class="footer-input">
+            <button type="submit" class="footer-btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="copyright">© <span id="year"></span> HungerFree. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+   <script src="navAuth.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+

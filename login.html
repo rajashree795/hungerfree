@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HungerFree | Login & Register</title>
+  <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --accent: #00b894;
+      --accent2: #55efc4;
+      --bg: linear-gradient(135deg, #e8fff5, #f7fffb);
+      --radius: 18px;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+      --transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .auth-container {
+      width: min(1000px, 95%);
+      height: 600px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      overflow: hidden;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .auth-left {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(0, 184, 148, 0.7), rgba(85, 239, 196, 0.7)),
+        url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80')
+        center/cover no-repeat;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .auth-left h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .auth-left p {
+      font-size: 1rem;
+      max-width: 90%;
+      margin: 0 auto;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .auth-right {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: #fff;
+      position: relative;
+    }
+
+    .form {
+      width: 100%;
+      max-width: 360px;
+      position: absolute;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: var(--transition);
+      pointer-events: none;
+    }
+
+    .form.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .form h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .form input {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid #ccc;
+      font-size: 1rem;
+      color: #222;
+      background: rgba(255, 255, 255, 0.85);
+      transition: var(--transition);
+    }
+
+    .form input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(0, 184, 148, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+    }
+
+    .toggle-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .toggle-text a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .toggle-text a:hover {
+      text-decoration: underline;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-weight: 500;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .site-footer {
+      width: 100%;
+      margin-top: auto;
+    }
+
+@media (max-width: 900px) {
+  body {
+    background: #f7fffb;
+    padding: 1rem;
+  }
+
+  .auth-container {
+    flex-direction: column;
+    height: auto;
+    border-radius: 18px;
+
+  }
+
+  .auth-left {
+    height: 250px;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(0,184,148,0.7), rgba(85,239,196,0.6)),
+      url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80')
+      center/cover no-repeat;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .auth-left h1 {
+    font-size: 1.8rem;
+  }
+
+  .auth-left p {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  .auth-right {
+    flex: none;
+    width: 100%;
+    padding: 2rem 1.2rem;
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    position: relative;
+  }
+
+  /* 🔥 Core fix: only active form is visible */
+  .form {
+    position: absolute;
+    top: 2rem;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px);
+    transition: all 0.5s ease;    padding-bottom: 2rem;
+
+  }
+
+  .form.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+    position: relative;
+  }
+
+  .form h2 {
+    font-size: 1.3rem;
+  }
+
+  .btn {
+    margin-top: 0.5rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .toggle-text {
+    font-size: 0.85rem;
+  }
+}
+
+  </style>
+</head>
+<body>
+    <!-- NAV -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home"><i class="fa-solid fa-utensils"></i><span>HungerFree</span></a>
+
+      <nav id="navDesktop" class="nav-desktop" role="navigation" aria-label="Main Navigation">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="./index.html#about" class="nav-link">About</a>
+        <a href="./index.html#places" class="nav-link">Places</a>
+        <a href="./index.html#donate" class="nav-link">Donate</a>
+        <a href="./view.html" class="nav-link">Available Foods</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+        <a href="/login.html" class="nav-link btn-login">Login</a>
+      </nav>
+
+      <button id="burger" class="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- mobile sliding menu -->
+    <aside id="mobileMenu" class="mobile-menu" aria-hidden="true">
+      <div class="mobile-inner">
+       
+
+        <nav class="mobile-nav" role="navigation">
+             <a class="mobile-link" href="./index.html#home">Home</a>
+          <a class="mobile-link" href="./index.html#about">About</a>
+          <a class="mobile-link" href="./index.html#places">Places</a>
+          <a class="mobile-link" href="./index.html#donate">Donate</a>
+          <a href="./view.html" class="nav-link">Available Foods</a>
+          <a class="mobile-link" href="./contact.html">Contact</a>
+          <a class="mobile-link login-mobile" href="./login.html">Login</a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+<main>
+  <div class="auth-container">
+    <div class="auth-left">
+      <h1>Feed Hope, Not Waste</h1>
+    <p>Join HungerFree — together, we can connect surplus food with those who need it most. Make an impact today 💚</p>
+  </div>
+
+  <div class="auth-right">
+    <form id="loginForm" class="form active">
+      <h2>Welcome Back</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPass" placeholder="Password" required>
+      <button type="submit" class="btn">Login</button>
+      
+      <div class="toggle-text">Don’t have an account? 
+        <a href="#" id="showRegister">Register</a>
+      </div>
+    </form>
+
+    <form id="registerForm" class="form">
+      <h2>Create Account</h2>
+      <input type="text" id="regName" placeholder="Full Name" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="password" id="regPass" placeholder="Password" required>
+      <button type="submit" class="btn">Register</button>
+      <div class="toggle-text">Already have an account? <a href="#" id="showLogin">Login</a></div>
+    </form>
+  </div>
+</div>
+</main>
+
+<div class="toast" id="toast"></div>
+<!-- FOOTER -->
+  <footer class="site-footer" style="background: rgba(255,255,255,0.88);">
+    <div class="footer-content">
+      <div class="container footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand">
+            <i class="fa-solid fa-utensils"></i>
+            <span>HungerFree</span>
+          </div>
+          <p class="footer-note">Turning leftovers into lifelines — join the movement.</p>
+          <div class="socials">
+            <a href="#" aria-label="instagram" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="twitter" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" aria-label="linkedin" class="social-link" style="text-decoration: none;"><i class="fa-brands fa-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#places">Service Areas</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Get Involved</h4>
+          <ul class="footer-links">
+            <li><a href="#donate">Donate Food</a></li>
+            <li><a href="#volunteer">Volunteer</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="/login">Partner Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Newsletter</h4>
+          <p class="newsletter-text">Stay updated with our mission and impact stories.</p>
+          <form class="footer-form">
+            <input type="email" placeholder="Your email" class="footer-input">
+            <button type="submit" class="footer-btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="copyright">© <span id="year"></span> HungerFree. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script><script src="auth.js"></script>
+</body>
+</html>
